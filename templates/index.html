@@ -25,7 +25,8 @@
         <div class="product-card">
             <div class="product-img-wrapper">
                 {% if p.image_url %}
-                <img src="{{ url_for('static', filename='uploads/' + p.image_url) }}" alt="{{ p.name }}">
+                <img src="{{ p.image_url if p.image_url.startswith('http') else url_for('static', filename='uploads/' + p.image_url) }}"
+                    alt="{{ p.name }}">
                 {% else %}
                 <span style="color: var(--color-maroon); font-size: 2rem;">❀</span> <!-- Placeholder image -->
                 {% endif %}
@@ -38,7 +39,8 @@
                         style="padding: 8px 15px; font-size: 0.9rem;">View</a>
                     <button class="btn btn-primary add-to-cart-btn" style="padding: 8px 15px; font-size: 0.9rem;"
                         data-id="{{ p.id }}" data-name="{{ p.name }}" data-price="{{ p.price }}"
-                        data-image="{{ p.image_url }}">Add to Cart</button>
+                        data-image="{{ p.image_url if p.image_url and p.image_url.startswith('http') else (url_for('static', filename='uploads/' + p.image_url) if p.image_url else '') }}">Add
+                        to Cart</button>
                 </div>
             </div>
         </div>

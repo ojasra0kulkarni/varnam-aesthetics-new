@@ -10,6 +10,10 @@ class Config:
         'sqlite:///' + os.path.join(basedir, 'varnam.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
+    # Supabase Setup
+    SUPABASE_URL = os.environ.get('SUPABASE_URL')
+    SUPABASE_KEY = os.environ.get('SUPABASE_KEY')
+    
     # Mail Config
     MAIL_SERVER = os.environ.get('SMTP_SERVER') or 'smtp.gmail.com'
     MAIL_PORT = int(os.environ.get('SMTP_PORT') or 587)

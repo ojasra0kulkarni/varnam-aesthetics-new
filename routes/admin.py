@@ -4,7 +4,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash
 from models import db, User, Product, Order, OrderItem, Payment
-from utils import send_email
+from utils import send_email, upload_to_supabase, get_supabase_public_url
 
 admin = Blueprint('admin', __name__)
 
@@ -61,8 +61,21 @@ def add_product():
         filename = secure_filename(image.filename)
         import time
         filename = f"prod_{int(time.time())}_{filename}"
-        filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-        image.save(filepath)
+        
+        # Try Supabase upload first
+        supabase_filename = upload_to_supabase(image, filename, bucket_name="products", prefix="prod_")
+        
+        if supabase_filename:
+            # Get public url to save to DB
+            public_url_res = get_supabase_public_url(supabase_filename, bucket_name="products")
+            # public_url_res is likely a string url or dict
+            filename = public_url_res if isinstance(public_url_res, str) else supabase_filename
+        else:
+            # Fallback local upload
+            filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+            # Must seek to 0 because upload_to_supabase might have read it (though it returned None if not configured, so wait)
+            image.seek(0)
+            image.save(filepath)
         
     product = Product(name=name, description=description, price=price, stock=stock, image_url=filename)
     db.session.add(product)

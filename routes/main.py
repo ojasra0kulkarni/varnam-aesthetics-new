@@ -2,7 +2,7 @@ import os
 from flask import Blueprint, render_template, request, flash, redirect, url_for, current_app, jsonify
 from werkzeug.utils import secure_filename
 from models import db, Product, Order, OrderItem, Payment
-from utils import send_email
+from utils import send_email, upload_to_supabase, get_supabase_public_url
 
 main = Blueprint('main', __name__)
 
@@ -63,8 +63,16 @@ def checkout():
         # Add timestamp to avoid overwriting
         import time
         filename = f"{int(time.time())}_{filename}"
-        filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-        screenshot.save(filepath)
+        
+        # Supabase upload
+        supabase_filename = upload_to_supabase(screenshot, filename, bucket_name="payments", prefix="pay_")
+        if supabase_filename:
+            pub_url = get_supabase_public_url(supabase_filename, bucket_name="payments")
+            filename = pub_url if isinstance(pub_url, str) else supabase_filename
+        else:
+            filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+            screenshot.seek(0)
+            screenshot.save(filepath)
 
         # Create Order
         total_amount = 0
@@ -134,8 +142,16 @@ def custom_order():
             filename = secure_filename(reference_image.filename)
             import time
             filename = f"custom_req_{int(time.time())}_{filename}"
-            filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-            reference_image.save(filepath)
+            
+            # Supabase upload
+            supabase_filename = upload_to_supabase(reference_image, filename, bucket_name="products", prefix="req_")
+            if supabase_filename:
+                pub_url = get_supabase_public_url(supabase_filename, bucket_name="products")
+                filename = pub_url if isinstance(pub_url, str) else supabase_filename
+            else:
+                filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+                reference_image.seek(0)
+                reference_image.save(filepath)
 
         # Email admin
         subject = "New Custom Order Request - Varnam Aesthetics"

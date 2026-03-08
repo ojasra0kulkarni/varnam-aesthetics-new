@@ -20,11 +20,17 @@ def create_app(config_class=Config):
     # Ensure upload folder exists
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
+    from flask_cors import CORS
+    CORS(app, resources={r"/api/*": {"origins": "*"}})
+
     from routes.main import main as main_blueprint
     app.register_blueprint(main_blueprint)
 
     from routes.admin import admin as admin_blueprint
     app.register_blueprint(admin_blueprint, url_prefix='/admin')
+
+    from routes.api import api as api_blueprint
+    app.register_blueprint(api_blueprint, url_prefix='/api')
 
     @login_manager.user_loader
     def load_user(user_id):

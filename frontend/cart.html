@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart | Varnam Aesthetics</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+        rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="navbar-brand">Varnam Aesthetics</a>
+            <button class="nav-toggle" aria-label="Toggle navigation"
+                onclick="this.classList.toggle('active'); document.querySelector('.nav-links').classList.toggle('active');">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html">Shop</a></li>
+                <li><a href="custom_order.html">Custom Order</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li>
+                    <a href="cart.html" class="cart-icon">
+                        Cart <span class="cart-count" style="display: none;">0</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <div class="container">
+            <h1 style="text-align: center; margin-bottom: 30px;">Your Cart</h1>
+            <div class="ornament-separator" style="margin-bottom: 40px;">❀</div>
+
+            <div id="cart-container"
+                style="max-width: 900px; margin: 0 auto; background-color: var(--color-white); padding: 30px; border-radius: var(--border-radius); box-shadow: var(--shadow-sm);">
+
+                <div id="empty-cart-msg" style="text-align: center; display: none;">
+                    <p style="font-size: 1.2rem; margin-bottom: 20px;">Your cart is beautifully empty.</p>
+                    <a href="shop.html" class="btn btn-secondary">Continue Shopping</a>
+                </div>
+
+                <div id="cart-items" style="margin-bottom: 30px;"></div>
+
+                <div id="cart-summary"
+                    style="border-top: 2px solid var(--color-soft-pink); padding-top: 20px; text-align: right; display: none;">
+                    <h3 style="margin-bottom: 15px;">Total: <span id="cart-total"
+                            style="color: var(--color-gold);">₹0.00</span>
+                    </h3>
+                    <button id="checkout-btn" class="btn btn-primary"
+                        style="padding: 12px 30px; font-size: 1.1rem;">Proceed to
+                        Checkout</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>Varnam Aesthetics</h3>
+                    <p>Handcrafted traditional Indian ornaments.</p>
+                </div>
+                <div class="footer-links" style="min-width: 150px;">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li style="margin-bottom: 8px;"><a href="shop.html">Shop</a></li>
+                        <li style="margin-bottom: 8px;"><a href="custom_order.html">Custom Orders</a></li>
+                        <li style="margin-bottom: 8px;"><a href="about.html">Our Story</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4>Follow Us</h4>
+                    <p><a href="https://www.instagram.com/varnam_aesthetics/" target="_blank"
+                            style="color:var(--color-soft-pink);">Instagram</a></p>
+                    <p><a href="https://www.youtube.com/@varnamaesthetics" target="_blank"
+                            style="color:var(--color-soft-pink);">YouTube</a></p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Varnam Aesthetics. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Custom JS -->
+    <script src="static/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cartContainer = document.getElementById('cart-items');
+            const emptyMsg = document.getElementById('empty-cart-msg');
+            const cartSummary = document.getElementById('cart-summary');
+            const cartTotalSpan = document.getElementById('cart-total');
+            const checkoutBtn = document.getElementById('checkout-btn');
+
+            window.renderCartUI = function () {
+                const currentCart = JSON.parse(localStorage.getItem('varnam_cart')) || [];
+
+                if (currentCart.length === 0) {
+                    cartContainer.innerHTML = '';
+                    emptyMsg.style.display = 'block';
+                    cartSummary.style.display = 'none';
+                    return;
+                }
+
+                emptyMsg.style.display = 'none';
+                cartSummary.style.display = 'block';
+
+                let html = '<table style="width: 100%; border-collapse: collapse; text-align: left;">';
+                html += '<tr style="border-bottom: 1px solid #ddd;">';
+                html += '<th style="padding: 10px;">Product</th>';
+                html += '<th style="padding: 10px;">Price</th>';
+                html += '<th style="padding: 10px;">Quantity</th>';
+                html += '<th style="padding: 10px;">Total</th>';
+                html += '<th style="padding: 10px;"></th>';
+                html += '</tr>';
+
+                let total = 0;
+
+                currentCart.forEach(item => {
+                    const itemTotal = item.price * item.quantity;
+                    total += itemTotal;
+
+                    const imgUrl = item.image ?
+                        (item.image.startsWith('http') || item.image.startsWith('/') ? item.image : `http://127.0.0.1:5000/static/uploads/${item.image}`)
+                        : null;
+
+                    html += '<tr style="border-bottom: 1px solid #eee;">';
+                    html += `<td style="padding: 15px 10px; display: flex; align-items: center; gap: 15px;">`;
+                    if (imgUrl) {
+                        html += `<img src="${imgUrl}" alt="${item.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; background-color: var(--color-soft-pink);">`;
+                    } else {
+                        html += `<div style="width: 50px; height: 50px; background-color: var(--color-soft-pink); display:flex; align-items:center; justify-content:center; border-radius: 4px;"><span style="color:var(--color-maroon)">❀</span></div>`;
+                    }
+                    html += `<span style="font-weight: 500;">${item.name}</span></td>`;
+                    html += `<td style="padding: 15px 10px;">₹${item.price.toFixed(2)}</td>`;
+                    html += `<td style="padding: 15px 10px;">
+                                <input type="number" min="1" value="${item.quantity}" 
+                                       onchange="updateQuantity(${item.id}, this.value)" 
+                                       style="width: 60px; padding: 5px; border: 1px solid #ddd; border-radius: 4px; text-align: center;">
+                             </td>`;
+                    html += `<td style="padding: 15px 10px; font-weight: 600;">₹${itemTotal.toFixed(2)}</td>`;
+                    html += `<td style="padding: 15px 10px; text-align: center;">
+                                <button onclick="removeFromCart(${item.id})" style="background: none; border: none; color: var(--color-maroon); cursor: pointer; font-size: 1.2rem;" title="Remove">×</button>
+                             </td>`;
+                    html += '</tr>';
+                });
+
+                html += '</table>';
+
+                cartContainer.innerHTML = html;
+                cartTotalSpan.textContent = `₹${total.toFixed(2)}`;
+            };
+
+            renderCartUI();
+
+            checkoutBtn.addEventListener('click', () => {
+                window.location.href = "checkout.html";
+            });
+        });
+    </script>
+</body>
+
+</html>
