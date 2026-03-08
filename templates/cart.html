@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Your Cart | Varnam Aesthetics{% endblock %}
+
+{% block content %}
+<h1 style="text-align: center; margin-bottom: 30px;">Your Cart</h1>
+<div class="ornament-separator" style="margin-bottom: 40px;">❀</div>
+
+<div id="cart-container"
+    style="max-width: 900px; margin: 0 auto; background-color: var(--color-white); padding: 30px; border-radius: var(--border-radius); box-shadow: var(--shadow-sm);">
+    <!-- Cart items will be rendered here via JS -->
+    <div id="empty-cart-msg" style="text-align: center; display: none;">
+        <p style="font-size: 1.2rem; margin-bottom: 20px;">Your cart is beautifully empty.</p>
+        <a href="{{ url_for('main.shop') }}" class="btn btn-secondary">Continue Shopping</a>
+    </div>
+
+    <div id="cart-items" style="margin-bottom: 30px;"></div>
+
+    <div id="cart-summary"
+        style="border-top: 2px solid var(--color-soft-pink); padding-top: 20px; text-align: right; display: none;">
+        <h3 style="margin-bottom: 15px;">Total: <span id="cart-total" style="color: var(--color-gold);">₹0.00</span>
+        </h3>
+        <button id="checkout-btn" class="btn btn-primary" style="padding: 12px 30px; font-size: 1.1rem;">Proceed to
+            Checkout</button>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const cartContainer = document.getElementById('cart-items');
+        const emptyMsg = document.getElementById('empty-cart-msg');
+        const cartSummary = document.getElementById('cart-summary');
+        const cartTotalSpan = document.getElementById('cart-total');
+        const checkoutBtn = document.getElementById('checkout-btn');
+
+        // This function overrides the global renderCartUI if needed, but it's simpler to just define it here.
+        window.renderCartUI = function () {
+            // Re-fetch cart from localStorage
+            const currentCart = JSON.parse(localStorage.getItem('varnam_cart')) || [];
+
+            if (currentCart.length === 0) {
+                cartContainer.innerHTML = '';
+                emptyMsg.style.display = 'block';
+                cartSummary.style.display = 'none';
+                return;
+            }
+
+            emptyMsg.style.display = 'none';
+            cartSummary.style.display = 'block';
+
+            let html = '<table style="width: 100%; border-collapse: collapse; text-align: left;">';
+            html += '<tr style="border-bottom: 1px solid #ddd;">';
+            html += '<th style="padding: 10px;">Product</th>';
+            html += '<th style="padding: 10px;">Price</th>';
+            html += '<th style="padding: 10px;">Quantity</th>';
+            html += '<th style="padding: 10px;">Total</th>';
+            html += '<th style="padding: 10px;"></th>';
+            html += '</tr>';
+
+            let total = 0;
+
+            currentCart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+
+                html += '<tr style="border-bottom: 1px solid #eee;">';
+                html += `<td style="padding: 15px 10px; display: flex; align-items: center; gap: 15px;">`;
+                if (item.image) {
+                    html += `<img src="/static/uploads/${item.image}" alt="${item.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; background-color: var(--color-soft-pink);">`;
+                } else {
+                    html += `<div style="width: 50px; height: 50px; background-color: var(--color-soft-pink); display:flex; align-items:center; justify-content:center; border-radius: 4px;"><span style="color:var(--color-maroon)">❀</span></div>`;
+                }
+                html += `<span style="font-weight: 500;">${item.name}</span></td>`;
+                html += `<td style="padding: 15px 10px;">₹${item.price.toFixed(2)}</td>`;
+                html += `<td style="padding: 15px 10px;">
+                            <input type="number" min="1" value="${item.quantity}" 
+                                   onchange="updateQuantity(${item.id}, this.value)" 
+                                   style="width: 60px; padding: 5px; border: 1px solid #ddd; border-radius: 4px; text-align: center;">
+                         </td>`;
+                html += `<td style="padding: 15px 10px; font-weight: 600;">₹${itemTotal.toFixed(2)}</td>`;
+                html += `<td style="padding: 15px 10px; text-align: center;">
+                            <button onclick="removeFromCart(${item.id})" style="background: none; border: none; color: var(--color-maroon); cursor: pointer; font-size: 1.2rem;" title="Remove">×</button>
+                         </td>`;
+                html += '</tr>';
+            });
+
+            html += '</table>';
+
+            cartContainer.innerHTML = html;
+            cartTotalSpan.textContent = `₹${total.toFixed(2)}`;
+        };
+
+        renderCartUI();
+
+        checkoutBtn.addEventListener('click', () => {
+            // To proceed using traditional form submission, we pass cart data to session or generate form dynamically
+            // Here, we'll store order intent in localStorage and redirect
+            window.location.href = "{{ url_for('main.checkout') }}";
+        });
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us | Varnam Aesthetics{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 0 auto; padding: 40px 20px;">
+    <h1 style="text-align: center; margin-bottom: 20px;">Get in Touch</h1>
+    <div class="ornament-separator" style="margin-bottom: 40px;">❀</div>
+
+    <div
+        style="background-color: var(--color-white); padding: 30px; border-radius: var(--border-radius); box-shadow: var(--shadow-sm); border: 1px solid var(--color-soft-pink);">
+        <p style="text-align: center; margin-bottom: 30px; color: var(--color-text-light);">Have questions? We'd love to
+            hear from you.</p>
+
+        <div style="margin-bottom: 25px;">
+            <h4 style="color: var(--color-maroon); margin-bottom: 5px;">Email Us</h4>
+            <p>varnamaesthetics.contact@gmail.com</p>
+        </div>
+
+        <div style="margin-bottom: 25px;">
+            <h4 style="color: var(--color-maroon); margin-bottom: 5px;">Social Media</h4>
+            <p><a href="https://www.instagram.com/varnam_aesthetics/" target="_blank"
+                    style="text-decoration: underline;">Follow us on Instagram</a></p>
+        </div>
+
+        <div>
+            <h4 style="color: var(--color-maroon); margin-bottom: 15px;">Looking for something specific?</h4>
+            <a href="{{ url_for('main.custom_order') }}" class="btn btn-secondary" style="width: 100%;">Request Custom
+                Order</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

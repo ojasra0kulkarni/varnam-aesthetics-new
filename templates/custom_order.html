@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Custom Order | Varnam Aesthetics{% endblock %}
+
+{% block content %}
+<div
+    style="max-width: 700px; margin: 0 auto; padding: 40px 20px; background-color: var(--color-white); border-radius: var(--border-radius); box-shadow: var(--shadow-sm); border-top: 4px solid var(--color-gold);">
+    <h1 style="text-align: center; margin-bottom: 20px; color: var(--color-maroon);">Request a Custom Design</h1>
+    <div class="ornament-separator" style="margin-bottom: 30px;">❀</div>
+
+    <p style="text-align: center; margin-bottom: 40px; color: var(--color-text-main); line-height: 1.6;">Have a specific
+        vision in mind? Found inspiration online or want a piece modified just for you? Fill out the details below, and
+        our artisans will bring your dream ornament to life.</p>
+
+    <form action="{{ url_for('main.custom_order') }}" method="POST" enctype="multipart/form-data">
+
+        <div class="form-group">
+            <label for="name">Full Name *</label>
+            <input type="text" id="name" name="name" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email Address *</label>
+            <input type="email" id="email" name="email" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" class="form-control">
+        </div>
+
+        <div class="form-group">
+            <label for="description">Describe your ideal ornament in detail *</label>
+            <textarea id="description" name="description" class="form-control" rows="6" required
+                placeholder="Include details like colors, patterns, materials, and occasion."></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="reference_image">Upload a Reference Image (Optional)</label>
+            <input type="file" id="reference_image" name="reference_image" accept="image/*" class="form-control"
+                style="padding: 10px;">
+            <small style="color: var(--color-text-light); margin-top: 5px; display: block;">Upload sketches,
+                screenshots, or similar designs to help us understand.</small>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px;">
+            <button type="submit" class="btn btn-primary" style="padding: 15px 40px; font-size: 1.1rem;">Submit
+                Request</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

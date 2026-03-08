@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout Success | Varnam Aesthetics{% endblock %}
+
+{% block content %}
+<div
+    style="max-width: 600px; margin: 40px auto; background-color: var(--color-white); padding: 40px 30px; border-radius: var(--border-radius); box-shadow: var(--shadow-sm); text-align: center; border: 2px solid var(--color-soft-pink);">
+    <div style="font-size: 4rem; color: #4caf50; margin-bottom: 20px;">✓</div>
+
+    <h1 style="color: var(--color-maroon); margin-bottom: 20px;">Order Received!</h1>
+
+    <div class="ornament-separator" style="margin-bottom: 30px;">❀</div>
+
+    <p style="font-size: 1.1rem; margin-bottom: 15px;">Thank you for your purchase.</p>
+    <p style="margin-bottom: 30px; color: var(--color-text-light);">Your order ID is: <strong>#{{ order_id }}</strong>
+    </p>
+
+    <p style="margin-bottom: 30px; line-height: 1.6;">We have received your payment screenshot. Our team will verify the
+        payment and you will receive a confirmation email shortly.</p>
+
+    <a href="{{ url_for('main.shop') }}" class="btn btn-secondary">Continue Shopping</a>
+</div>
+{% endblock %}

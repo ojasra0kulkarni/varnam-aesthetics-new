@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout | Varnam Aesthetics{% endblock %}
+
+{% block content %}
+<h1 style="text-align: center; margin-bottom: 20px;">Checkout</h1>
+<div class="ornament-separator" style="margin-bottom: 40px;">❀</div>
+
+<div style="display: flex; flex-wrap: wrap; gap: 40px; max-width: 1000px; margin: 0 auto;">
+
+    <!-- Customer Details Form & Payment -->
+    <div
+        style="flex: 1; min-width: 300px; background-color: var(--color-white); padding: 30px; border-radius: var(--border-radius); box-shadow: var(--shadow-sm);">
+        <h3 style="margin-bottom: 20px; color: var(--color-maroon);">Shipping & Payment</h3>
+
+        <form id="checkout-form" action="{{ url_for('main.checkout') }}" method="POST" enctype="multipart/form-data">
+
+            <div class="form-group">
+                <label for="name">Full Name *</label>
+                <input type="text" id="name" name="name" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address *</label>
+                <input type="email" id="email" name="email" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="address">Shipping Address *</label>
+                <textarea id="address" name="address" class="form-control" rows="3" required
+                    placeholder="Street, City, State, ZIP Code"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number (optional)</label>
+                <input type="tel" id="phone" name="phone" class="form-control" placeholder="e.g. 9876543210">
+            </div>
+
+            <!-- Hidden inputs will be injected here by JS -->
+            <div id="hidden-cart-inputs"></div>
+
+            <div
+                style="margin: 30px 0; padding: 20px; border: 2px dashed var(--color-gold); border-radius: var(--border-radius); text-align: center; background-color: var(--color-bg-cream);">
+                <h4 style="margin-bottom: 15px; color: var(--color-maroon);">UPI Payment</h4>
+                <p style="margin-bottom: 15px; font-size: 0.95rem;">Please scan the QR code below to pay <strong
+                        id="amount-to-pay" style="color: var(--color-gold);">₹0.00</strong> using any UPI app (GPay,
+                    PhonePe, Paytm).</p>
+
+                <!-- Placeholder for UPI QR Code -->
+                <div
+                    style="width: 200px; height: 200px; margin: 0 auto 20px; background-color: var(--color-white); display: flex; align-items: center; justify-content: center; border: 1px solid #ddd;">
+                    <span style="color: var(--color-maroon); font-size: 3rem;">❀ QR ❀</span>
+                </div>
+
+                <p style="font-size: 0.9rem; color: var(--color-text-light); margin-bottom: 15px;">UPI ID:
+                    varnamaesthetics@upi</p>
+
+                <div class="form-group" style="text-align: left;">
+                    <label for="screenshot">Upload Payment Screenshot *</label>
+                    <input type="file" id="screenshot" name="screenshot" accept="image/*" class="form-control" required
+                        style="padding: 8px;">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; font-size: 1.1rem; padding: 15px;">Place
+                Order</button>
+        </form>
+    </div>
+
+    <!-- Order Summary -->
+    <div
+        style="flex: 1; min-width: 300px; background-color: var(--color-soft-pink); padding: 30px; border-radius: var(--border-radius); box-shadow: var(--shadow-sm); height: fit-content; border: 1px solid var(--color-gold);">
+        <h3 style="margin-bottom: 20px; color: var(--color-maroon);">Order Summary</h3>
+
+        <div id="checkout-summary-items" style="margin-bottom: 20px;">
+            <!-- JS populates this -->
+        </div>
+
+        <div style="border-top: 2px dashed var(--color-gold); padding-top: 20px; text-align: right;">
+            <h4 style="font-size: 1.3rem;">Total: <span id="checkout-total"
+                    style="color: var(--color-maroon);">₹0.00</span></h4>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const cart = JSON.parse(localStorage.getItem('varnam_cart')) || [];
+
+        if (cart.length === 0) {
+            window.location.href = "{{ url_for('main.cart') }}";
+            return;
+        }
+
+        const summaryContainer = document.getElementById('checkout-summary-items');
+        const totalSpan = document.getElementById('checkout-total');
+        const amountToPay = document.getElementById('amount-to-pay');
+        const hiddenInputs = document.getElementById('hidden-cart-inputs');
+
+        let total = 0;
+        let summaryHtml = '';
+        let inputsHtml = '';
+
+        cart.forEach(item => {
+            const itemTotal = item.price * item.quantity;
+            total += itemTotal;
+
+            summaryHtml += `
+                <div style="display: flex; justify-content: space-between; margin-bottom: 15px; align-items: center;">
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <span style="font-weight: 500;">${item.name}</span>
+                        <span style="color: var(--color-text-light); font-size: 0.9rem;">x ${item.quantity}</span>
+                    </div>
+                    <span style="font-weight: 600;">₹${itemTotal.toFixed(2)}</span>
+                </div>
+            `;
+
+            inputsHtml += `
+                <input type="hidden" name="product_id[]" value="${item.id}">
+                <input type="hidden" name="quantity[]" value="${item.quantity}">
+            `;
+        });
+
+        summaryContainer.innerHTML = summaryHtml;
+        totalSpan.textContent = `₹${total.toFixed(2)}`;
+        amountToPay.textContent = `₹${total.toFixed(2)}`;
+        hiddenInputs.innerHTML = inputsHtml;
+
+        // Clear cart on submit
+        document.getElementById('checkout-form').addEventListener('submit', () => {
+            // Technically it's safer to clear it on success page, 
+            // but this is a simple local storage approach.
+            setTimeout(() => {
+                localStorage.removeItem('varnam_cart');
+            }, 500);
+        });
+    });
+</script>
+{% endblock %}

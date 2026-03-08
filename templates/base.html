@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Varnam Aesthetics{% endblock %}</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+        rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    {% block head %}{% endblock %}
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="{{ url_for('main.index') }}" class="navbar-brand">Varnam Aesthetics</a>
+            <button class="nav-toggle" aria-label="Toggle navigation"
+                onclick="this.classList.toggle('active'); document.querySelector('.nav-links').classList.toggle('active');">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('main.index') }}">Home</a></li>
+                <li><a href="{{ url_for('main.shop') }}">Shop</a></li>
+                <li><a href="{{ url_for('main.custom_order') }}">Custom Order</a></li>
+                <li><a href="{{ url_for('main.about') }}">About</a></li>
+                <li><a href="{{ url_for('main.contact') }}">Contact</a></li>
+                <li>
+                    <a href="{{ url_for('main.cart') }}" class="cart-icon">
+                        Cart <span class="cart-count" style="display: none;">0</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="{% if request.endpoint == 'main.index' %}home-main{% endif %}">
+        <div class="container">
+            <!-- Flash messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="flash-messages">
+                {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>Varnam Aesthetics</h3>
+                    <p>Handcrafted traditional Indian ornaments.</p>
+                </div>
+                <div class="footer-links" style="min-width: 150px;">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li style="margin-bottom: 8px;"><a href="{{ url_for('main.shop') }}">Shop</a></li>
+                        <li style="margin-bottom: 8px;"><a href="{{ url_for('main.custom_order') }}">Custom Orders</a>
+                        </li>
+                        <li style="margin-bottom: 8px;"><a href="{{ url_for('main.about') }}">Our Story</a></li>
+                        <li><a href="{{ url_for('admin.login') }}"
+                                style="color: var(--color-gold); font-weight: 500;">Admin Portal</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4>Contact Us</h4>
+                    <p>Email: varnamaesthetics.contact@gmail.com</p>
+                    <p><a href="https://www.instagram.com/varnam_aesthetics/" target="_blank"
+                            style="color:var(--color-soft-pink);">Follow us on Instagram</a></p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Varnam Aesthetics. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>
