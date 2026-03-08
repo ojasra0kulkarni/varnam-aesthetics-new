@@ -1,9 +1,13 @@
+import os
+import sys
+# Ensure the root directory is in the python path so absolute `api.*` imports work
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from flask import Flask, render_template
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
-from config import Config
-from models import db, User
-import os
+from api.config import Config
+from api.models import db, User
 
 bcrypt = Bcrypt()
 login_manager = LoginManager()
@@ -23,13 +27,13 @@ def create_app(config_class=Config):
     from flask_cors import CORS
     CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-    from routes.main import main as main_blueprint
+    from api.routes.main import main as main_blueprint
     app.register_blueprint(main_blueprint)
 
-    from routes.admin import admin as admin_blueprint
+    from api.routes.admin import admin as admin_blueprint
     app.register_blueprint(admin_blueprint, url_prefix='/admin')
 
-    from routes.api import api as api_blueprint
+    from api.routes.api import api as api_blueprint
     app.register_blueprint(api_blueprint, url_prefix='/api')
 
     @login_manager.user_loader
@@ -42,8 +46,9 @@ def create_app(config_class=Config):
 
     return app
 
+app = create_app()
+
 if __name__ == '__main__':
-    app = create_app()
     with app.app_context():
         db.create_all()
         # Create a default admin if none exists

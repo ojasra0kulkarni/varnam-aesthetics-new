@@ -3,8 +3,8 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for,
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.utils import secure_filename
 from werkzeug.security import check_password_hash
-from models import db, User, Product, Order, OrderItem, Payment
-from utils import send_email, upload_to_supabase, get_supabase_public_url
+from api.models import db, User, Product, Order, OrderItem, Payment
+from api.utils import send_email, upload_to_supabase, get_supabase_public_url
 
 admin = Blueprint('admin', __name__)
 

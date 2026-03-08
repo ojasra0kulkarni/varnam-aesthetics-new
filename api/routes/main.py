@@ -1,8 +1,8 @@
 import os
 from flask import Blueprint, render_template, request, flash, redirect, url_for, current_app, jsonify
 from werkzeug.utils import secure_filename
-from models import db, Product, Order, OrderItem, Payment
-from utils import send_email, upload_to_supabase, get_supabase_public_url
+from api.models import db, Product, Order, OrderItem, Payment
+from api.utils import send_email, upload_to_supabase, get_supabase_public_url
 
 main = Blueprint('main', __name__)
 

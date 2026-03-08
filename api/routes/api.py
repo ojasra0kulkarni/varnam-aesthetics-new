@@ -2,8 +2,8 @@ import os
 import json
 from flask import Blueprint, request, jsonify, current_app
 from werkzeug.utils import secure_filename
-from models import db, Product, Order, OrderItem, Payment
-from utils import upload_to_supabase, get_supabase_public_url
+from api.models import db, Product, Order, OrderItem, Payment
+from api.utils import upload_to_supabase, get_supabase_public_url
 
 api = Blueprint('api', __name__)
 
@@ -145,7 +145,7 @@ def custom_order():
             reference_image.seek(0)
             reference_image.save(filepath)
 
-    from utils import send_email
+    from api.utils import send_email
     subject = "New Custom Order Request - Varnam Aesthetics"
     body = f"""
 New custom order request:
