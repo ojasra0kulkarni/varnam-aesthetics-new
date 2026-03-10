@@ -142,7 +142,7 @@
                     total += itemTotal;
 
                     const imgUrl = item.image ?
-                        (item.image.startsWith('http') || item.image.startsWith('/') ? item.image : `/static/uploads/${item.image}`)
+                        item.image
                         : null;
 
                     html += '<tr style="border-bottom: 1px solid #eee;">';

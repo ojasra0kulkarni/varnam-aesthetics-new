@@ -19,8 +19,7 @@ def get_products():
     for p in products:
         image = p.image_url
         if image and not image.startswith('http'):
-            # Fallback local path
-            image = f"/static/uploads/{image}"
+            image = None  # Skip non-Supabase images
             
         products_list.append({
             'id': p.id,
@@ -37,7 +36,7 @@ def get_product(product_id):
     p = Product.query.get_or_404(product_id)
     image = p.image_url
     if image and not image.startswith('http'):
-        image = f"/static/uploads/{image}"
+        image = None  # Skip non-Supabase images
         
     return jsonify({
         'id': p.id,

@@ -120,7 +120,7 @@
 
                 products.forEach(p => {
                     const imgUrl = p.image_url ?
-                        (p.image_url.startsWith('http') || p.image_url.startsWith('/') ? p.image_url : `/static/uploads/${p.image_url}`)
+                        p.image_url
                         : null;
 
                     const imgHtml = imgUrl ?

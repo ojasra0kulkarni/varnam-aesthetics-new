@@ -68,7 +68,7 @@
                 html += '<tr style="border-bottom: 1px solid #eee;">';
                 html += `<td style="padding: 15px 10px; display: flex; align-items: center; gap: 15px;">`;
                 if (item.image && item.image.length > 0) {
-                    const imgSrc = (item.image.startsWith('http') || item.image.startsWith('/')) ? item.image : `/static/uploads/${item.image}`;
+                    const imgSrc = item.image;
                     html += `<img src="${imgSrc}" alt="${item.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; background-color: var(--color-soft-pink);">`;
                 } else {
                     html += `<div style="width: 50px; height: 50px; background-color: var(--color-soft-pink); display:flex; align-items:center; justify-content:center; border-radius: 4px;"><span style="color:var(--color-maroon)">❀</span></div>`;

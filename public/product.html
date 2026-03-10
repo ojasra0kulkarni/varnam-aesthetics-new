@@ -117,7 +117,7 @@
                 document.title = `${product.name} | Varnam Aesthetics`;
 
                 const imgUrl = product.image_url ?
-                    (product.image_url.startsWith('http') || product.image_url.startsWith('/') ? product.image_url : `/static/uploads/${product.image_url}`)
+                    product.image_url
                     : null;
 
                 const imgHtml = imgUrl ?

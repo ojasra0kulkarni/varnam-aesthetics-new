@@ -86,7 +86,7 @@
                         <h4>Payment Details</h4>
                         <p><strong>Status:</strong> {{ order.status }}</p>
                         {% if order.payment and order.payment.screenshot_url %}
-                        <a href="{{ order.payment.screenshot_url if order.payment.screenshot_url.startswith('http') else url_for('static', filename='uploads/' + order.payment.screenshot_url) }}"
+                        <a href="{{ order.payment.screenshot_url }}"
                             target="_blank"
                             style="display: inline-block; margin-top: 10px; color: #1976d2; text-decoration: underline;">View
                             Screenshot</a>
