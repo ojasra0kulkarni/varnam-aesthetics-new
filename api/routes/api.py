@@ -79,9 +79,12 @@ def checkout():
         pub_url = get_supabase_public_url(supabase_filename, bucket_name="payments")
         filename = pub_url if isinstance(pub_url, str) else supabase_filename
     else:
-        filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-        screenshot.seek(0)
-        screenshot.save(filepath)
+        try:
+            filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+            screenshot.seek(0)
+            screenshot.save(filepath)
+        except Exception as e:
+            print(f"Local file save failed: {e}")
 
     # Create Order
     order = Order(
@@ -141,9 +144,12 @@ def custom_order():
             pub_url = get_supabase_public_url(supabase_filename, bucket_name="products")
             filename = pub_url if isinstance(pub_url, str) else supabase_filename
         else:
-            filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-            reference_image.seek(0)
-            reference_image.save(filepath)
+            try:
+                filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+                reference_image.seek(0)
+                reference_image.save(filepath)
+            except Exception as e:
+                print(f"Local file save failed: {e}")
 
     from api.utils import send_email
     subject = "New Custom Order Request - Varnam Aesthetics"

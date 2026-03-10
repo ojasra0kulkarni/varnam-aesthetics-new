@@ -71,11 +71,14 @@ def add_product():
             # public_url_res is likely a string url or dict
             filename = public_url_res if isinstance(public_url_res, str) else supabase_filename
         else:
-            # Fallback local upload
-            filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-            # Must seek to 0 because upload_to_supabase might have read it (though it returned None if not configured, so wait)
-            image.seek(0)
-            image.save(filepath)
+            # Fallback local upload (may fail on read-only filesystems like Vercel)
+            try:
+                filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+                image.seek(0)
+                image.save(filepath)
+            except Exception as e:
+                print(f"Local file save failed: {e}")
+                filename = None  # No image saved
         
     product = Product(name=name, description=description, price=price, stock=stock, image_url=filename)
     db.session.add(product)
