@@ -3,7 +3,7 @@ import sys
 # Ensure the root directory is in the python path so absolute `api.*` imports work
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from flask import Flask, render_template
+from flask import Flask, render_template, jsonify
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 from api.config import Config
@@ -24,8 +24,11 @@ def create_app(config_class=Config):
     bcrypt.init_app(app)
     login_manager.init_app(app)
 
-    # Ensure upload folder exists
-    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    # Ensure upload folder exists (may fail on read-only filesystem like Vercel)
+    try:
+        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    except Exception:
+        pass
 
     from flask_cors import CORS
     CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -42,7 +45,31 @@ def create_app(config_class=Config):
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(int(user_id))
-        
+
+    # Lazy DB initialization on first request
+    @app.before_request
+    def ensure_db_initialized():
+        if not getattr(app, '_db_initialized', False):
+            try:
+                db.create_all()
+                if not User.query.filter_by(email='admin@varnamaesthetics.com').first():
+                    hashed_pw = bcrypt.generate_password_hash('password').decode('utf-8')
+                    default_admin = User(email='admin@varnamaesthetics.com', password_hash=hashed_pw, role='ADMIN')
+                    db.session.add(default_admin)
+                    db.session.commit()
+                app._db_initialized = True
+            except Exception as e:
+                print(f"DB init error: {e}")
+
+    @app.route('/health')
+    def health_check():
+        try:
+            from sqlalchemy import text
+            db.session.execute(text('SELECT 1'))
+            return jsonify({'status': 'ok', 'db': 'connected'}), 200
+        except Exception as e:
+            return jsonify({'status': 'error', 'db': str(e)}), 500
+
     @app.errorhandler(404)
     def page_not_found(e):
         return render_template('404.html'), 404
@@ -50,18 +77,6 @@ def create_app(config_class=Config):
     return app
 
 app = create_app()
-
-try:
-    with app.app_context():
-        db.create_all()
-        # Create a default admin if none exists
-        if not User.query.filter_by(email='admin@varnamaesthetics.com').first():
-            hashed_pw = bcrypt.generate_password_hash('password').decode('utf-8')
-            default_admin = User(email='admin@varnamaesthetics.com', password_hash=hashed_pw, role='ADMIN')
-            db.session.add(default_admin)
-            db.session.commit()
-except Exception as e:
-    print(f"DB initialization error (will retry on first request): {e}")
 
 if __name__ == '__main__':
     app.run(debug=True)
