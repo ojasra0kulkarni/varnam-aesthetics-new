@@ -51,14 +51,17 @@ def create_app(config_class=Config):
 
 app = create_app()
 
-with app.app_context():
-    db.create_all()
-    # Create a default admin if none exists
-    if not User.query.filter_by(email='admin@varnamaesthetics.com').first():
-        hashed_pw = bcrypt.generate_password_hash('password').decode('utf-8')
-        default_admin = User(email='admin@varnamaesthetics.com', password_hash=hashed_pw, role='ADMIN')
-        db.session.add(default_admin)
-        db.session.commit()
+try:
+    with app.app_context():
+        db.create_all()
+        # Create a default admin if none exists
+        if not User.query.filter_by(email='admin@varnamaesthetics.com').first():
+            hashed_pw = bcrypt.generate_password_hash('password').decode('utf-8')
+            default_admin = User(email='admin@varnamaesthetics.com', password_hash=hashed_pw, role='ADMIN')
+            db.session.add(default_admin)
+            db.session.commit()
+except Exception as e:
+    print(f"DB initialization error (will retry on first request): {e}")
 
 if __name__ == '__main__':
     app.run(debug=True)
