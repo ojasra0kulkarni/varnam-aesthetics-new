@@ -114,7 +114,7 @@
             </div>
             <div class="footer-bottom">
                 <p>&copy; 2024 Varnam Aesthetics. All rights reserved.</p>
-                <p style="margin-top:10px; font-size: 0.8rem; color: #a0a0a0;">Backend server: http://127.0.0.1:5000</p>
+                <p style="margin-top:10px; font-size: 0.8rem; color: #a0a0a0;">Backend server: </p>
             </div>
         </div>
     </footer>
@@ -145,7 +145,7 @@
 
                 products.forEach(p => {
                     const imgUrl = p.image_url ?
-                        (p.image_url.startsWith('http') || p.image_url.startsWith('/') ? p.image_url : `http://127.0.0.1:5000/static/uploads/${p.image_url}`)
+                        (p.image_url.startsWith('http') || p.image_url.startsWith('/') ? p.image_url : `/static/uploads/${p.image_url}`)
                         : null;
 
                     const imgHtml = imgUrl ?
