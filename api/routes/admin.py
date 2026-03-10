@@ -18,7 +18,7 @@ def login():
         password = request.form.get('password')
         
         user = User.query.filter_by(email=email).first()
-        from app import bcrypt # Import here to avoid circular logic or use check_password_hash directly if stored with generate_password_hash
+        from api.index import bcrypt # Import here to avoid circular logic or use check_password_hash directly if stored with generate_password_hash
         # Actually it's better to use check_password_hash with bcrypt hash
         if user and user.role == 'ADMIN' and bcrypt.check_password_hash(user.password_hash, password):
             login_user(user)

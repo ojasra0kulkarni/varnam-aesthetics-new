@@ -57,13 +57,16 @@ def upload_to_supabase(file_stream, original_filename, bucket_name="products", p
     # Note: 'file_options' content-type helps browsers render the image properly
     content_type = file_stream.content_type if hasattr(file_stream, 'content_type') else "application/octet-stream"
     
-    supabase.storage.from_(bucket_name).upload(
-        path=unique_filename,
-        file=file_bytes,
-        file_options={"content-type": content_type}
-    )
-    
-    return unique_filename
+    try:
+        supabase.storage.from_(bucket_name).upload(
+            path=unique_filename,
+            file=file_bytes,
+            file_options={"content-type": content_type}
+        )
+        return unique_filename
+    except Exception as e:
+        print(f"Supabase upload failed: {e}. Falling back to local storage.")
+        return None
 
 def get_supabase_public_url(filename, bucket_name="products"):
     """Returns the public URL for a given file in a public bucket."""
