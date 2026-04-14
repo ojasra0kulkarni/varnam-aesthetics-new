@@ -93,6 +93,19 @@
                             <p style="font-size: 0.9rem; color: var(--color-text-light); margin-bottom: 15px;">UPI ID:
                                 kondapallisirihamsini9@okhdfcbank</p>
 
+                            <!-- Instapayment Buttons -->
+                            <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap;">
+                                <a id="btn-gpay" href="#" target="_blank" class="btn" style="background-color: #fff; color: #3c4043; border: 1px solid #dadce0; display: flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 4px; text-decoration: none; font-weight: 500; font-family: 'Inter', sans-serif;">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg" alt="GPay" style="height: 18px;">
+                                    Pay with GPay
+                                </a>
+                                <a id="btn-phonepe" href="#" target="_blank" class="btn" style="background-color: #5f259f; color: #fff; border: 1px solid #5f259f; display: flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 4px; text-decoration: none; font-weight: 500; font-family: 'Inter', sans-serif;">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/PhonePe_Logo.svg" alt="PhonePe" style="height: 18px; filter: brightness(0) invert(1);">
+                                    Pay with PhonePe
+                                </a>
+                            </div>
+                            <p style="font-size: 0.8rem; color: var(--color-text-light); margin-bottom: 15px;">(Instant payment works on mobile devices)</p>
+
                             <div class="form-group" style="text-align: left;">
                                 <label for="screenshot">Upload Payment Screenshot *</label>
                                 <input type="file" id="screenshot" name="screenshot" accept="image/*"
@@ -201,6 +214,31 @@
             summaryContainer.innerHTML = summaryHtml;
             totalSpan.textContent = `₹${total.toFixed(2)}`;
             amountToPay.textContent = `₹${total.toFixed(2)}`;
+
+            // Set up Instant UPI Payment Links
+            const upiId = "kondapallisirihamsini9@okhdfcbank";
+            const payeeName = "Varnam Aesthetics";
+            const upiString = `pa=${upiId}&pn=${encodeURIComponent(payeeName)}&am=${total.toFixed(2)}&cu=INR`;
+            
+            const isAndroid = /Android/i.test(navigator.userAgent);
+            const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+            
+            let gpayLink = `upi://pay?${upiString}`;
+            let phonepeLink = `upi://pay?${upiString}`;
+            
+            if (isAndroid) {
+                gpayLink = `intent://pay?${upiString}#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end;`;
+                phonepeLink = `intent://pay?${upiString}#Intent;scheme=upi;package=com.phonepe.app;end;`;
+            } else if (isIOS) {
+                gpayLink = `gpay://upi/pay?${upiString}`;
+                phonepeLink = `phonepe://pay?${upiString}`;
+            }
+
+            const btnGpay = document.getElementById('btn-gpay');
+            const btnPhonepe = document.getElementById('btn-phonepe');
+            
+            if (btnGpay) btnGpay.href = gpayLink;
+            if (btnPhonepe) btnPhonepe.href = phonepeLink;
 
             const form = document.getElementById('checkout-form');
             const submitBtn = document.getElementById('submit-btn');
