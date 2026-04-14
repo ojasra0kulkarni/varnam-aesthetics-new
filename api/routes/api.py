@@ -50,10 +50,10 @@ def get_product(product_id):
 @api.route('/checkout', methods=['POST'])
 def checkout():
     # Expects multipart/form-data for the image
-    customer_name = request.form.get('customerName')
-    customer_email = request.form.get('customerEmail')
-    customer_address = request.form.get('customerAddress')
-    customer_phone = request.form.get('customerPhone')
+    customer_name = request.form.get('customerName') or request.form.get('name')
+    customer_email = request.form.get('customerEmail') or request.form.get('email')
+    customer_address = request.form.get('customerAddress') or request.form.get('address')
+    customer_phone = request.form.get('customerPhone') or request.form.get('phone')
     cart_items_json = request.form.get('cart')
     
     screenshot = request.files.get('screenshot')
@@ -137,17 +137,17 @@ New order received!
 Order ID: {order.id}
 Customer Name: {customer_name}
 Customer Email: {customer_email}
-Shipping Address: {customer_address}
-Phone: {customer_phone}
-Total Price: ₹{total_amount}
-
-Products Ordered:
+Items:
 {items_text}
 
-Payment Screenshot saved in Supabase/Storage.
+Total Amount: Rs. {order.total_amount}
+Please check the admin dashboard for the payment screenshot.
 """
-    send_email(subject, "Kondapallisirihamsini9@gmail.com", body)
-    
+    try:
+        send_email(subject, "Kondapallisirihamsini9@gmail.com", body)
+    except Exception as e:
+        print(f"Failed to send order email: {e}")
+
     return jsonify({'success': True, 'order_id': order.id, 'message': 'Order submitted successfully'})
 
 @api.route('/custom_order', methods=['POST'])
