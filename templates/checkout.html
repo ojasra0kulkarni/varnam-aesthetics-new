@@ -155,7 +155,8 @@
         
         if (isAndroid) {
             gpayLink = `intent://pay?${upiString}#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end;`;
-            phonepeLink = `intent://pay?${upiString}#Intent;scheme=upi;package=com.phonepe.app;end;`;
+            // Often Android handles native custom scheme better for PhonePe than intents
+            phonepeLink = `phonepe://pay?${upiString}`;
         } else if (isIOS) {
             gpayLink = `gpay://upi/pay?${upiString}`;
             phonepeLink = `phonepe://pay?${upiString}`;
@@ -163,12 +164,26 @@
 
         const btnGpay = document.getElementById('btn-gpay');
         const btnPhonepe = document.getElementById('btn-phonepe');
+        const form = document.getElementById('checkout-form');
         
-        if (btnGpay) btnGpay.href = gpayLink;
-        if (btnPhonepe) btnPhonepe.href = phonepeLink;
+        function validateBeforePay(e) {
+            if (!form.reportValidity()) {
+                e.preventDefault();
+                alert("Please fill in your shipping details above before making the payment!");
+            }
+        }
+        
+        if (btnGpay) {
+            btnGpay.href = gpayLink;
+            btnGpay.addEventListener('click', validateBeforePay);
+        }
+        if (btnPhonepe) {
+            btnPhonepe.href = phonepeLink;
+            btnPhonepe.addEventListener('click', validateBeforePay);
+        }
 
         // Clear cart on submit
-        document.getElementById('checkout-form').addEventListener('submit', () => {
+        form.addEventListener('submit', () => {
             // Technically it's safer to clear it on success page, 
             // but this is a simple local storage approach.
             setTimeout(() => {

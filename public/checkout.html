@@ -228,7 +228,8 @@
             
             if (isAndroid) {
                 gpayLink = `intent://pay?${upiString}#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end;`;
-                phonepeLink = `intent://pay?${upiString}#Intent;scheme=upi;package=com.phonepe.app;end;`;
+                // Often Android handles native custom scheme better for PhonePe than intents
+                phonepeLink = `phonepe://pay?${upiString}`;
             } else if (isIOS) {
                 gpayLink = `gpay://upi/pay?${upiString}`;
                 phonepeLink = `phonepe://pay?${upiString}`;
@@ -236,11 +237,24 @@
 
             const btnGpay = document.getElementById('btn-gpay');
             const btnPhonepe = document.getElementById('btn-phonepe');
-            
-            if (btnGpay) btnGpay.href = gpayLink;
-            if (btnPhonepe) btnPhonepe.href = phonepeLink;
-
             const form = document.getElementById('checkout-form');
+            
+            function validateBeforePay(e) {
+                if (!form.reportValidity()) {
+                    e.preventDefault();
+                    alert("Please fill in your shipping details above before making the payment!");
+                }
+            }
+            
+            if (btnGpay) {
+                btnGpay.href = gpayLink;
+                btnGpay.addEventListener('click', validateBeforePay);
+            }
+            if (btnPhonepe) {
+                btnPhonepe.href = phonepeLink;
+                btnPhonepe.addEventListener('click', validateBeforePay);
+            }
+
             const submitBtn = document.getElementById('submit-btn');
             const errorDiv = document.getElementById('checkout-error');
 
