@@ -150,14 +150,6 @@ Please check the admin dashboard for the payment screenshot.
 
     return jsonify({'success': True, 'order_id': order.id, 'message': 'Order submitted successfully'})
 
-@api.route('/secret-clear-orders-xyz', methods=['GET'])
-def secret_clear():
-    num_payments = Payment.query.delete()
-    num_order_items = OrderItem.query.delete()
-    num_orders = Order.query.delete()
-    db.session.commit()
-    return jsonify({"message": f"Successfully deleted {num_orders} orders from the database."})
-
 @api.route('/custom_order', methods=['POST'])
 def custom_order():
     name = request.form.get('name')

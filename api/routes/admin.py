@@ -99,6 +99,22 @@ def delete_product(product_id):
     flash('Product deleted successfully', 'success')
     return redirect(url_for('admin.dashboard'))
 
+@admin.route('/order/delete/<int:order_id>')
+@login_required
+def delete_order(order_id):
+    if current_user.role != 'ADMIN':
+        return redirect(url_for('main.index'))
+        
+    order = Order.query.get_or_404(order_id)
+    if order.payment:
+        db.session.delete(order.payment)
+    for item in order.items:
+        db.session.delete(item)
+    db.session.delete(order)
+    db.session.commit()
+    flash('Order deleted successfully', 'success')
+    return redirect(url_for('admin.dashboard'))
+
 @admin.route('/order/confirm/<int:order_id>')
 @login_required
 def confirm_order(order_id):
