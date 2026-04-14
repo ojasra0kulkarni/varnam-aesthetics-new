@@ -21,6 +21,11 @@
     <nav class="navbar">
         <div class="container">
             <a href="index.html" class="navbar-brand">Varnam Aesthetics</a>
+            <div class="mobile-cart-container" style="display: flex; align-items: center; margin-left: auto; gap: 15px; margin-right: 15px;">
+                <a href="cart.html" class="cart-icon" style="font-size: 1.3rem; color: var(--color-maroon); position: relative; text-decoration: none;">
+                    🛒<span class="cart-count" style="display: none; position: absolute; top: -8px; right: -10px; background-color: var(--color-gold); color: white; font-size: 0.75rem; padding: 2px 6px; border-radius: 50%; font-weight: bold;">0</span>
+                </a>
+            </div>
             <button class="nav-toggle" aria-label="Toggle navigation"
                 onclick="this.classList.toggle('active'); document.querySelector('.nav-links').classList.toggle('active');">
                 <span></span>
@@ -33,7 +38,7 @@
                 <li><a href="custom_order.html">Custom Order</a></li>
                 <li><a href="about.html">About</a></li>
                 <li><a href="contact.html">Contact</a></li>
-                <li>
+                <li class="desktop-cart-item">
                     <a href="cart.html" class="cart-icon">
                         Cart <span class="cart-count" style="display: none;">0</span>
                     </a>
@@ -95,12 +100,12 @@
 
                             <!-- Instapayment Buttons -->
                             <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap;">
-                                <a id="btn-gpay" href="#" target="_blank" class="btn" style="background-color: #fff; color: #3c4043; border: 1px solid #dadce0; display: flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 4px; text-decoration: none; font-weight: 500; font-family: 'Inter', sans-serif;">
+                                <a id="btn-gpay" href="#" target="_blank" class="btn" style="background-color: #fff; color: #3c4043; border: 1px solid #dadce0; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; border-radius: 4px; text-decoration: none; font-weight: 500; font-family: 'Inter', sans-serif; flex: 1; min-width: 150px;">
                                     <img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Google_Pay_Logo.svg" alt="GPay" style="height: 18px;">
                                     Pay with GPay
                                 </a>
-                                <a id="btn-phonepe" href="#" target="_blank" class="btn" style="background-color: #5f259f; color: #fff; border: 1px solid #5f259f; display: flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 4px; text-decoration: none; font-weight: 500; font-family: 'Inter', sans-serif;">
-                                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e5/PhonePe_Logo.svg" alt="PhonePe" style="height: 18px; filter: brightness(0) invert(1);">
+                                <a id="btn-phonepe" href="#" target="_blank" class="btn" style="background-color: #5f259f; color: #fff; border: 1px solid #5f259f; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; border-radius: 4px; text-decoration: none; font-weight: 500; font-family: 'Inter', sans-serif; flex: 1; min-width: 150px;">
+                                    <span style="font-weight: 800; font-size: 0.9rem; border: 1.5px solid white; border-radius: 50%; width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; padding-bottom: 2px;">पे</span>
                                     Pay with PhonePe
                                 </a>
                             </div>
