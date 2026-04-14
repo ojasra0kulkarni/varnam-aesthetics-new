@@ -122,6 +122,32 @@ def checkout():
     db.session.add(payment)
     db.session.commit()
     
+    # Send Email to Admin
+    items_text = ""
+    for item in cart_items:
+        product = Product.query.get(int(item['id']))
+        if product:
+            items_text += f"- {product.name} x {item['quantity']}\n"
+
+    from api.utils import send_email
+    subject = f"New Order Received – Varnam Aesthetics (#{order.id})"
+    body = f"""
+New order received!
+
+Order ID: {order.id}
+Customer Name: {customer_name}
+Customer Email: {customer_email}
+Shipping Address: {customer_address}
+Phone: {customer_phone}
+Total Price: ₹{total_amount}
+
+Products Ordered:
+{items_text}
+
+Payment Screenshot saved in Supabase/Storage.
+"""
+    send_email(subject, "Kondapallisirihamsini9@gmail.com", body)
+    
     return jsonify({'success': True, 'order_id': order.id, 'message': 'Order submitted successfully'})
 
 @api.route('/custom_order', methods=['POST'])
@@ -164,6 +190,6 @@ Description:
 
 Reference Image URL/Filename: {filename}
 """
-    send_email(subject, current_app.config['MAIL_USERNAME'], body)
+    send_email(subject, "Kondapallisirihamsini9@gmail.com", body)
     
     return jsonify({'success': True, 'message': 'Custom order request sent successfully!'})

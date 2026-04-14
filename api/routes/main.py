@@ -125,7 +125,7 @@ Products Ordered:
 
 Payment Screenshot saved as {filename} in uploads folder.
 """
-        send_email(subject, "ojas.v.kulkarni@gmail.com", body)
+        send_email(subject, "Kondapallisirihamsini9@gmail.com", body)
 
         return render_template('checkout_success.html', order_id=order.id)
 
